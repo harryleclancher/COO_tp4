@@ -81,26 +81,118 @@ public:
 		secondes = new int(*(my_dms.secondes));
 	}
 
-	dms& operator + (const dms& my_dms) {
+	dms operator + (const dms& my_dms) {
+		dms *res = new dms();
 		int test_secondes = *secondes + *(my_dms.getDegre());
 		int test_minutes = 0;
 		if (test_secondes > 60) {
-			setSecondes(test_secondes % 60);
+			res->setSecondes(test_secondes % 60);
 			test_minutes = 1;
 		}
+		int test_degre = 0;
 		test_minutes = *minutes + *(my_dms.getMinutes()) + test_minutes;
 		if (test_minutes > 60) {
-			setMinutes(test_minutes % 60);
-			setDegre(*degre + 1);
+			res->setMinutes(test_minutes % 60);
+			test_degre = 1;
 		}
-		setDegre(*degre + *(my_dms.degre));
+		res->setDegre(*degre + *(my_dms.degre) + test_degre);
 
-		return *this;
+		return *res;
 	}
 
-	dms& operator - (const dms& my_dms) {
-		int 
+	dms operator - (const dms& my_dms) {
+		dms *res = new dms();
+		int test_degre = *degre - *(my_dms.getDegre());
+		if (test_degre < 0) {
+			res->setDegre(0);
+			res->setMinutes(0);
+			res->setSecondes(0);
+		}
+		else {
+			res->setDegre(test_degre);
+		}
+		int test_minutes = *minutes - *(my_dms.getMinutes());
+		if (test_minutes < 0) {
+			res->setMinutes(0);
+			res->setSecondes(0);
+		}
+		else {
+			res->setMinutes(test_minutes);
+		}
+		int test_secondes = *secondes - *(my_dms.getMinutes());
+		if (test_secondes < 0) {
+			res->setSecondes(0);
+		}
+		else
+		{
+			res->setSecondes(test_secondes);
+		}
+		return *res;
 	}
+
+	dms operator * (const unsigned int nb) {
+		dms* res = new dms();
+		int test_secondes = *secondes * nb;
+		int test_minutes = 0;
+		if (test_secondes > 60) {
+			res->setSecondes(test_secondes % 60);
+			test_minutes = test_secondes / 60;
+		}
+		int test_degre = 0;
+		test_minutes = (*minutes + test_minutes) * nb;
+		if (test_minutes > 60) {
+			res->setMinutes(test_minutes % 60);
+			test_degre = test_minutes / 60;
+		}
+		res->setDegre((test_degre + *degre) * nb);
+
+		return *res;
+	}
+
+	float operator ^ (const dms& my_dms) {
+		float res = (float)*(my_dms.getDegre()) + (float)*(my_dms.getMinutes()) * 100.0 / 60.0 + (float)*(my_dms.getSecondes()) * 1000 / 60;
+		return res;
+	}
+
+	bool operator <= (const dms& my_dms) const {
+		if (getDegre() == my_dms.getDegre()) {
+			if (getMinutes() == my_dms.getMinutes()) {
+				return getSecondes() <= my_dms.getSecondes();
+			}
+			else {
+				return getMinutes() <= my_dms.getMinutes();
+			}
+		}
+		else {
+			return getDegre() <= my_dms.getDegre();
+		}
+
+	}
+
+
+	bool operator >= (const dms& my_dms) const {
+		if (*(getDegre()) == *(my_dms.getDegre())) {
+			if (*(getMinutes()) == *my_dms.getMinutes()) {
+				return *getSecondes() >= *my_dms.getSecondes();
+			}
+			else {
+				return *getMinutes() >= *my_dms.getMinutes();
+			}
+		}
+		else {
+			return *getDegre() >= *my_dms.getDegre();
+		}
+
+	}
+
+	bool operator == (const dms& my_dms) const {
+		return *getDegre() == *my_dms.getDegre() && *getMinutes() == *my_dms.getMinutes() && *getSecondes() == *my_dms.getSecondes();
+	}
+
+	bool operator != (const dms& my_dms) const {
+		return *getDegre() != *my_dms.getDegre() || *getMinutes() != *my_dms.getMinutes() || *getSecondes() != *my_dms.getSecondes();
+	}
+
 
 
 
